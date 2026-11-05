@@ -357,6 +357,76 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
   #menu .selects{gap:8px}
 }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+
+/* ---------- Paneles compactos: menos alto y menos ancho en todos los dispositivos ---------- */
+.slab{--pad:18px;max-width:372px;gap:11px;border-radius:20px}
+.brand{font-size:14px;gap:7px}.brand svg{width:22px;height:22px}.brand small{font-size:8.5px}
+.print{gap:0}
+.print .a{font-size:clamp(16px,4.4vw,20px)}
+.print .b{font-size:clamp(24px,7vw,30px)}
+.lead{font-size:13px;line-height:1.45}
+.pick{gap:5px}
+.pick > span,.sel > span,.opt-group > span{font-size:10px}
+.sel{gap:5px}
+.sel select{min-height:38px;font-size:13px;padding-top:7px;padding-bottom:7px;border-radius:10px}
+.seg{padding:3px;border-radius:12px}
+.seg .chip{min-height:34px;font-size:13px;padding:5px 6px;border-radius:9px}
+.seg .swatch i{width:16px;height:16px}
+.chip{min-height:36px;padding:6px 12px;font-size:12.5px}
+.actions{gap:8px;padding-top:10px}
+.cta{min-height:46px;font-size:15px;padding:10px 14px;border-radius:12px}
+.ghost{min-height:42px;font-size:14px;border-radius:12px}
+.ghost.sm{flex-direction:row;gap:6px;min-height:40px;font-size:12px;padding:6px 6px}
+.ghost.sm svg{width:16px;height:16px}
+.fact{padding:9px 12px}.fact b{font-size:10px}.fact p{font-size:13px}
+.stat-grid b{font-size:20px}.stat-grid div{padding:9px}
+.tut-t{font-size:clamp(22px,6vw,28px)}
+.tut-body{font-size:13.5px;gap:8px}
+.pw{grid-template-columns:36px 1fr;gap:10px}.pw .ic{width:36px;height:36px}.pw .ic svg{width:24px;height:24px}
+/* personaje y remera lado a lado; sucursal y proyecto también */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair .pick{flex-direction:column;align-items:stretch;gap:5px;min-width:0}
+.pair .pick > span{min-width:0}
+.selects{grid-template-columns:1fr 1fr;gap:10px}
+#menu .lead{display:none}
+#aptPanel .slab{max-width:360px}
+/* pantallas táctiles: los botones no bajan de un tamaño cómodo para el dedo */
+@media (pointer:coarse){ .seg .chip{min-height:38px} .ghost.sm{min-height:42px} }
+/* celular vertical: hoja más baja y botones lado a lado */
+@media (max-width:600px) and (orientation:portrait){
+  .slab{--pad:16px;--padb:calc(14px + env(safe-area-inset-bottom,0px));gap:10px;border-radius:22px 22px 0 0;max-height:78vh;max-height:78dvh}
+  .slab::before{margin:-6px 0 -4px;width:36px;height:4px}
+  #aptPanel .slab{max-height:50vh;max-height:50dvh}
+  .actions .row:not(.mini){flex-direction:row;gap:8px}
+  .actions .row:not(.mini) > .cta{flex:1.5 1 0;width:auto}
+  .actions .row:not(.mini) > .ghost{flex:1 1 0;width:auto;min-height:46px}
+  .print .b{font-size:clamp(24px,7.4vw,30px)}
+  .overlay.center .lead,#pausePanel .fact,#deadPanel .fact{display:none}
+  .selects{grid-template-columns:1fr 1fr}
+}
+@media (max-width:360px){ .pair,.selects{gap:8px} .seg .chip{font-size:12px} .pair .swatch i{display:none} }
+/* celular acostado: panel lateral más angosto */
+@media (max-height:520px) and (orientation:landscape){
+  .slab{max-width:min(380px,50vw);gap:8px}
+  .overlay.center .slab{max-width:min(440px,80vw)}
+  #menu .pair .pick{display:flex}
+  .print .b{font-size:24px}.print .a{font-size:16px}
+}
+@media (max-width:600px) and (orientation:portrait){
+  .apt-tabs{flex-wrap:wrap;overflow:visible;margin:0;padding:0 0 6px;gap:3px}
+  .apt-tabs .tab{flex:0 0 auto;font-size:12px;padding:6px 8px}
+  #aptPanel .print .b{font-size:24px}
+}
+/* nombre para el ranking */
+.nick{display:flex;gap:8px;align-items:flex-end}
+.nick .sel{flex:1;min-width:0}
+.nick input{font-family:var(--body);font-weight:800;font-size:14px;color:var(--red);background:#fff;border:0;border-radius:10px;min-height:40px;padding:8px 10px;width:100%;min-width:0;box-sizing:border-box;-webkit-user-select:text;user-select:text}
+.nick input::placeholder{color:#B07A7A;font-weight:600}
+.nick input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.nick .ghost{flex:none;min-height:40px;padding:0 14px;font-size:13px}
+.rk .tag{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-left:6px;flex:none}
+/* pantallas grandes: el panel crece apenas, sin ocupar la escena */
+@media (min-width:1600px) and (min-height:900px){ .slab{max-width:400px} }
 </style>
 
 <canvas id="c" aria-label="Juego Camino a Dueño"></canvas>
@@ -407,6 +477,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
       <span class="b">EMPIEZA ACÁ<em>…</em></span>
     </div>
     <p class="lead">Existen 20 caminos para ser dueño. Este es el tuyo: corré del plan de ahorro al pozo y a la entrega de tus llaves.</p>
+    <div class="pair">
     <div class="pick">
       <span>Personaje</span>
       <div class="chips seg" id="roleChips" role="group" aria-label="Elegí tu personaje">
@@ -417,6 +488,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
     <div class="pick" id="shirtRow" role="group" aria-label="Elegí tu remera">
       <span>Remera</span>
       <div class="chips seg"><button class="chip swatch" id="swRed" aria-pressed="true"><i class="sw-red"></i>Roja</button><button class="chip swatch" id="swWhite" aria-pressed="false"><i class="sw-white"></i>Blanca</button></div>
+    </div>
     </div>
     <div class="selects">
       <label class="sel"><span>Salís de la sucursal</span><select id="branchSel"></select></label>
@@ -469,6 +541,11 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
       <button class="chip" id="tabBranch" aria-pressed="true">Sucursales</button>
       <button class="chip" id="tabPlayers" aria-pressed="false">Jugadores</button>
     </div>
+    <form class="nick" id="rankNick" hidden>
+      <label class="sel"><span>Tu nombre en el ranking</span><input id="rankNickIn" maxlength="20" autocomplete="nickname" enterkeyhint="done" placeholder="Ej.: Miguel de Liniers"></label>
+      <button class="ghost" type="submit">Guardar</button>
+    </form>
+    <p class="note" id="rankNickNote" hidden></p>
     <div class="rank-list" id="rankList"></div>
     <p class="note" id="rankNote"></p>
     <div class="actions"><div class="row"><button class="cta" id="rankClose">Volver</button></div></div>
@@ -538,6 +615,11 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
     <div class="missum" id="winMiss"></div>
     <p class="note" id="wBest"></p>
     <p class="note" id="wRank" hidden></p>
+    <form class="nick" id="winNick" hidden>
+      <label class="sel"><span>¿Con qué nombre aparecés en el ranking?</span><input id="winNickIn" maxlength="20" autocomplete="nickname" enterkeyhint="done" placeholder="Tu nombre"></label>
+      <button class="ghost" type="submit">Guardar</button>
+    </form>
+    <p class="note" id="winNickNote" hidden></p>
     <div class="visit"><b>Agendá tu visita</b><span id="wVisit"></span></div>
     <div class="actions">
       <button class="cta" id="aptGo">Ver mi depto</button>
@@ -3797,6 +3879,7 @@ function win(){
   const [bn, ba] = branchOf();
   $('#wVisit').textContent = `Conocé los proyectos reales en la sucursal ${bn}: ${ba}.`;
   submitScore(runTime, coins);
+  showWinNick();
   $('#bubble').classList.add('off');
   showPanel('#winPanel');
 }
@@ -3886,11 +3969,42 @@ async function initRanking(){
     db.collection('scores').onSnapshot(snap => {
       scoreDocs = snap.docs.map(d => Object.assign({ id:d.id }, d.data()));
       if(!snap.metadata.fromCache) clearTimeout(timer);
-      rankState = 'ok'; renderRanking();
+      rankState = 'ok'; syncNick(); renderRanking();
     }, () => { clearTimeout(timer); rankState = 'error'; renderRanking(); });
   }catch(e){ rankState = 'off'; renderRanking(); }
 }
-function openRanking(back){ rankBack = back; showPanel('#rankPanel'); renderRanking(); }
+function openRanking(back){ rankBack = back; showPanel('#rankPanel'); syncNick(); renderRanking(); }
+/* ---- nombre del jugador para el ranking (lo escribe cada uno; se guarda en este dispositivo y en su fila del ranking) ---- */
+const NICK_MAX = 20;
+const cleanNick = s => String(s || '').replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, NICK_MAX);
+const getNick = () => cleanNick(prefs.nick);
+function syncNick(){
+  const n = getNick(), shared = !!(db && myId);
+  $('#rankNickIn').value = n; $('#winNickIn').value = n;
+  $('#rankNick').hidden = !shared || rankState === 'off' || rankState === 'error';
+}
+async function saveNick(raw, noteSel){
+  const note = $(noteSel), n = cleanNick(raw);
+  note.hidden = false;
+  if(!n){ note.textContent = 'Escribí un nombre para aparecer en el ranking.'; return false; }
+  prefs.nick = n; savePrefs(); syncNick();
+  note.textContent = `Listo: aparecés como «${n}».`;
+  if(db && myId && canWrite !== false){
+    try{
+      const ref = db.collection('scores').doc(myId), snap = await ref.get();
+      if(snap.exists) await ref.update({ name:n, updatedAt:Date.now() });
+      else await ref.set({ name:n, updatedAt:Date.now() });
+    }catch(e){
+      if(e && e.code === 'invalid_argument'){ canWrite = false; note.textContent = 'Guardamos tu nombre en este dispositivo, pero para que se vea en el ranking necesitás acceso de colaborador al juego.'; }
+      else note.textContent = 'Guardamos tu nombre; se va a ver en el ranking en tu próxima llegada.';
+    }
+  }
+  renderRanking();
+  return true;
+}
+$('#rankNick').addEventListener('submit', e => { e.preventDefault(); saveNick($('#rankNickIn').value, '#rankNickNote'); $('#rankNickIn').blur(); });
+$('#winNick').addEventListener('submit', async e => { e.preventDefault(); const ok = await saveNick($('#winNickIn').value, '#winNickNote'); $('#winNickIn').blur(); if(ok) $('#winNick').hidden = true; });
+function showWinNick(){ syncNick(); $('#winNickNote').hidden = true; $('#winNick').hidden = !(db && myId) || canWrite === false || !!getNick(); }
 function setRankTab(t){ rankTab = t; $('#tabBranch').setAttribute('aria-pressed', t === 'branch'); $('#tabPlayers').setAttribute('aria-pressed', t === 'players'); renderRanking(); }
 $('#tabBranch').onclick = () => setRankTab('branch');
 $('#tabPlayers').onclick = () => setRankTab('players');
@@ -3929,11 +4043,16 @@ async function renderRanking(){
     const ps = scoreDocs.filter(d => typeof d.bestTime === 'number').sort((a, b) => a.bestTime - b.bestTime).slice(0, 15);
     if(!ps.length) frag.appendChild(emptyMsg('Todavía nadie llegó a la entrega de llaves. ¡Sé el primero!'));
     else {
-      const profs = usr ? await usr.profiles(ps.map(d => d.id)) : {};
+      let profs = {};
+      try{ profs = (usr ? await usr.profiles(ps.map(d => d.id)) : {}) || {}; }catch(e){ profs = {}; }
       if(token !== rankToken) return;
       ps.forEach((d, i) => {
-        const pr = profs[d.id] || {};
-        frag.appendChild(rankRow(i + 1, pr.name || 'Jugador', `${d.lastBranch || '—'} · ${d.wins || 1} ${d.wins === 1 ? 'llegada' : 'llegadas'} · ${d.bestCoins || 0} cuotas`, fmtTime(d.bestTime), null, d.id === myId, pr.avatarUrl || null));
+        const pr = profs[d.id] || {}, me = d.id === myId;
+        const nm = cleanNick(d.name) || (me ? getNick() : '') || pr.name || `Jugador ${i + 1}`;
+        const wins = +d.wins || 1;
+        const row = rankRow(i + 1, nm, `${d.lastBranch || '—'} · ${wins} ${wins === 1 ? 'llegada' : 'llegadas'} · ${+d.bestCoins || 0} cuotas`, fmtTime(d.bestTime), null, me, pr.avatarUrl || null);
+        if(me){ const tg = document.createElement('span'); tg.className = 'tag'; tg.textContent = 'Vos'; row.querySelector('.who').appendChild(tg); }
+        frag.appendChild(row);
       });
     }
     note.textContent = 'Ordenado por el mejor tiempo hasta la entrega de llaves.';
@@ -3957,7 +4076,8 @@ async function submitScore(time, cs){
       winsByBranch: wbb, wins: (+prev.wins || 0) + 1,
       bestTime: typeof prev.bestTime === 'number' ? Math.min(prev.bestTime, time) : time,
       bestCoins: Math.max(+prev.bestCoins || 0, cs),
-      lastBranch: bn, project: projName(), role: prefs.role, updatedAt: Date.now()
+      lastBranch: bn, project: projName(), role: prefs.role, updatedAt: Date.now(),
+      ...((getNick() || cleanNick(prev.name)) ? { name: getNick() || cleanNick(prev.name) } : {})
     });
     el.hidden = false; el.textContent = `Sumaste un dueño para la sucursal ${bn} en el ranking.`;
   }catch(e){
@@ -4474,10 +4594,10 @@ function renderAptOptions(){
 const AVIEW = {
   estilo:  { cam:[0.2, 9.5, 14.5], look:[-0.3, 0.2, -0.8], orb:0.18, fov:50, p:[0.5, 0.9] },
   living:  { cam:[0.7, 2.6, 9.0], look:[0.6, 1.05, -0.6], orb:0.45, fov:46, p:[0.5, 0.9] },
-  cocina:  { cam:[4.6, 2.9, 5.8], look:[6.9, 0.95, -1.2], orb:0.22, fov:48, p:[8.3, 0.4] },
-  dormi:   { cam:[-6.2, 3.0, 4.9], look:[-7.2, 0.8, -1.6], orb:0.12, fov:52, p:[-5.5, 0.3] },
-  balcon:  { cam:[-1.1, 2.15, 2.0], look:[-1.9, 0.85, -4.6], orb:0.1, fov:52, p:[-0.9, -3.95] },
-  mascota: { cam:[1.9, 1.9, 3.5], look:[0.95, 0.4, -0.15], orb:0.25, fov:40, p:[-0.55, -0.3] },
+  cocina:  { cam:[4.6, 3.1, 6.4], look:[7.2, 0.95, -1.1], orb:0.16, fov:48, p:[8.1, 0.9] },
+  dormi:   { cam:[-6.3, 3.3, 5.8], look:[-6.75, 0.8, -1.5], orb:0.1, fov:50, p:[-5.6, -1.3] },
+  balcon:  { cam:[-1.95, 5.4, -10.8], look:[-1.95, 0.35, -4.1], orb:0.12, fov:46, p:[-0.75, -3.85] },   // desde afuera: se ve todo el balcón
+  mascota: { cam:[3.1, 2.9, 5.8], look:[0.55, 0.5, -0.45], orb:0.18, fov:42, p:[-0.5, -1.15] },
   logros:  { cam:[0.2, 9.5, 14.5], look:[-0.3, 0.2, -0.8], orb:0.18, fov:50, p:[0.5, 0.9] }
 };
 function placeAptPlayer(){
@@ -4507,7 +4627,14 @@ function updateApt(dt){
   aptT += dt;
   const w = window.innerWidth, h = window.innerHeight, v = AVIEW[aptTab] || AVIEW.living, tall = w / h < 0.8;
   aptCam.aspect = w / h; aptCam.fov = tall ? v.fov + 20 : v.fov;
-  if(tall) aptCam.setViewOffset(w, h, 0, h*0.2, w, h); else aptCam.setViewOffset(w, h, -w*0.17, 0, w, h);
+  // la escena se centra en el espacio que deja libre el panel (abajo en celular, a la izquierda en pantallas anchas)
+  const slab = document.querySelector('#aptPanel .slab'), rc = slab && !$('#aptPanel').hidden ? slab.getBoundingClientRect() : null;
+  let vox = 0, voy = 0;
+  if(rc){
+    if(tall || rc.top > h*0.3){ const free = Math.max(h*0.35, rc.top); voy = h/2 - free/2; }
+    else { const free = Math.min(rc.right, w*0.6); vox = -(free/2); }
+  }
+  aptCam.setViewOffset(w, h, vox, voy, w, h);
   aptCam.updateProjectionMatrix();
   const a = Math.sin(aptT*0.22)*v.orb, ox = v.cam[0] - v.look[0], oz = v.cam[2] - v.look[2];
   tmpV.set(v.look[0] + ox*Math.cos(a) + oz*Math.sin(a), v.cam[1], v.look[2] - ox*Math.sin(a) + oz*Math.cos(a)); tmpL.set(v.look[0], v.look[1], v.look[2]);
