@@ -907,6 +907,8 @@ const QL = [
 ];
 let qMode = 'auto', qLevel = 0, QC = QL[0];
 try{ qMode = localStorage.getItem('cad-qmode') || 'auto'; }catch(e){}
+// en celulares el mapa se arma en porciones más chicas por cuadro, para que no se note
+const SPAWN_MS = (window.matchMedia && matchMedia('(pointer:coarse)').matches) ? 2 : 4;
 function initialQuality(){
   if(qMode !== 'auto') return +qMode;
   let learned = null; try{ learned = localStorage.getItem('cad-qauto'); }catch(e){}
@@ -928,8 +930,12 @@ sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.05;
 function applyQuality(l){
   qLevel = clamp(l, 0, 2); QC = QL[qLevel];
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QC.pr, qMode === 'auto' ? dynPR : 9));
-  if(sun.castShadow !== QC.shadows) sun.castShadow = QC.shadows;
-  if(sun.shadow.mapSize.x !== QC.map){ sun.shadow.mapSize.set(QC.map, QC.map); if(sun.shadow.map){ sun.shadow.map.dispose(); sun.shadow.map = null; } }
+  // Las sombras se apagan sin cambiar los materiales: así el celular no tiene que recompilar todos los gráficos (eso lo congelaba).
+  // La luz sigue "con sombra", pero su zona de sombra queda vacía y el mapa de sombras deja de actualizarse.
+  sun.castShadow = true;
+  if(QC.shadows && sun.shadow.mapSize.x !== QC.map){ sun.shadow.mapSize.set(QC.map, QC.map); if(sun.shadow.map){ sun.shadow.map.dispose(); sun.shadow.map = null; } }
+  sun.shadow.camera.far = QC.shadows ? 48 : 1.01; sun.shadow.camera.updateProjectionMatrix();
+  renderer.shadowMap.autoUpdate = QC.shadows; renderer.shadowMap.needsUpdate = true;
   VIEW = QC.view; if(scene.fog){ scene.fog.near = QC.fogN; scene.fog.far = QC.fogF; }
   resize(); renderQualityChips();
 }
@@ -949,7 +955,7 @@ function perfSample(realDt){
   perfAcc = 0; perfN = 0; perfWin = 0;
   if(avgMs <= 18.5) return;                       // 54 cuadros por segundo o más: está bien
   if(qLevel < 2){ applyQuality(qLevel + 1); try{ localStorage.setItem('cad-qauto', String(qLevel)); }catch(e){} }
-  else if(dynPR > 0.7){ dynPR = Math.max(0.7, +(dynPR - 0.1).toFixed(2)); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QC.pr, dynPR)); resize(); try{ localStorage.setItem('cad-dynpr', String(dynPR)); }catch(e){} }
+  else if(Math.min(dynPR, renderer.getPixelRatio()) > 0.7){ dynPR = Math.max(0.7, +(Math.min(dynPR, renderer.getPixelRatio()) - 0.1).toFixed(2)); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QC.pr, dynPR)); resize(); try{ localStorage.setItem('cad-dynpr', String(dynPR)); }catch(e){} }
 }
 function resize(){
   const w = window.innerWidth, h = window.innerHeight;
@@ -3681,7 +3687,7 @@ function warmInvisible(){
 function spawnAhead(){
   const limit = dist + VIEW, t0 = performance.now();
   // reparte el trabajo: si este cuadro ya armó bastante, lo que está lejos espera al siguiente
-  const busy = ahead => state === 'run' && ahead > dist + 75 && performance.now() - t0 > 4;
+  const busy = ahead => state === 'run' && ahead > dist + 75 && performance.now() - t0 > SPAWN_MS;
   while(tileNext*TILE < Math.min(limit, TRACK + 60)){ buildTile(tileNext); tileNext++; }
   while(nextRow < limit) genRow();
   for(let s=0; s<2; s++){
@@ -4724,6 +4730,7 @@ function updateApt(dt){
   drivePerson(player, cyc < 2.4 ? poseVictory(aptT) : cyc < 5 ? poseWave(aptT) : poseIdle(aptT), dt, 8);
   setMouth(player, cyc < 5);
   for(const t of aptP.tails){ const s = Math.sin(aptT*t.sp)*(t.amp ?? 0.5); if(t.ax === 'z') t.o.rotation.z = s; else t.o.rotation.y = s; }
+  renderer.shadowMap.autoUpdate = true;   // el depto siempre con sombras (es una escena quieta y liviana)
   renderer.render(aptScene, aptCam);
 }
 
@@ -5021,6 +5028,8 @@ function frame(now){
   sun.position.set(px - 6, 16, 7); sun.target.position.set(px, 0, -5);
   if(state !== 'menu') updateHUD();
   menuViewOffset();
+  renderer.shadowMap.autoUpdate = QC.shadows;
+  if(!QC.shadows && !sun.shadow.map) renderer.shadowMap.needsUpdate = true;   // deja el mapa de sombras vacío creado
   renderer.render(scene, camera);
 }
 // en celular vertical el menú sube desde abajo: se corre la imagen hacia arriba para que el personaje quede a la vista
